@@ -3,7 +3,9 @@ package com.udacity.asteroidradar
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import com.udacity.asteroidradar.adapter.AsteroidAdapter
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -51,4 +53,13 @@ fun binImageViewToDisplayPicture(imageView: ImageView, url: String?){
         Picasso.with(imageView.context).load(url).into(imageView)
     }
 
+}
+
+// This method set a list of data into recyclerview
+@BindingAdapter("setData")
+fun bindData(recyclerView: RecyclerView, data: List<Asteroid>?) {
+    data?.let { asteroidsList ->
+        (recyclerView.adapter as AsteroidAdapter).submitList(asteroidsList)
+
+    }
 }
