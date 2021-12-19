@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:kmUnitText="@{asteroid.estimatedDiameter}"
+                    app:kmUnitText="@{asteroid.estimatedDiameter.kilometers.maxDiameter}"
                     tools:text="0.82 km" />
 
                 <TextView
@@ -127,7 +127,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:velocityText="@{asteroid.relativeVelocity}"
+                    app:velocityText="@{asteroid.closeApproachData.get(0).relativeVelocity.kilometersPerSecond}"
                     tools:text="11.9 km/s" />
 
                 <TextView
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:textColor="@color/default_text_color"
-                    app:astronomicalUnitText="@{asteroid.distanceFromEarth}"
+                    app:astronomicalUnitText="@{asteroid.closeApproachData.get(0).distanceFromEarth.astronomical}"
                     tools:text="0.0924 au" />
 
             </LinearLayout>
