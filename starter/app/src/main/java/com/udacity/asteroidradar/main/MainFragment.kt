@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.adapter.AsteroidAdapter
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
@@ -21,7 +22,12 @@ class MainFragment : Fragment() {
 
         binding.viewModel = viewModel
 
-        binding.asteroidRecycler.adapter = AsteroidAdapter()
+        binding.asteroidRecycler.adapter = AsteroidAdapter(
+            AsteroidAdapter.AsteroidListener { asteroid ->  
+//                TODO("make a section to call a detail of an asteroid")
+                findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
+            }
+        )
 
         setHasOptionsMenu(true)
 
