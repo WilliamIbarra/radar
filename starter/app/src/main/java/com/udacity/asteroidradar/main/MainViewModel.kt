@@ -7,12 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.AsteroidsData
+import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel : ViewModel() {
 
@@ -38,48 +40,76 @@ class MainViewModel : ViewModel() {
     private fun getPictureOfDay() {
 
         viewModelScope.launch {
-            AsteroidApi.retrofitService.getPictureOfDay().enqueue(object : Callback<PictureOfDay> {
-                override fun onFailure(call: Call<PictureOfDay>, t: Throwable) {
-                    _pictureOfDay.value = null
+            try {
+                val pictureOfDay = AsteroidApi.retrofitService.getPictureOfDay(API_KEY)
+                _pictureOfDay.value = pictureOfDay
+            } catch (ex: Exception) {
+                _pictureOfDay.value = null
+            }
+        }
+    }
+
+
+    // This function uses Api service to get the list of week asteroids
+    fun getAsteroids() {
+
+        viewModelScope.launch {
+
+            try {
+                val asteroids =
+                    AsteroidApi.retrofitService.getWeekAsteroids(getActualDate(), API_KEY)
+                _listOfAsteroids.value = asteroids
+
+                val allAsteroids: ArrayList<Asteroid> = ArrayList()
+                asteroids.data.values.forEach { asteroidsList ->
+
+                    asteroidsList.forEach { asteroid ->
+                        allAsteroids.add(asteroid)
+                    }
+
                 }
 
-                override fun onResponse(call: Call<PictureOfDay>, response: Response<PictureOfDay>) {
-                    _pictureOfDay.value = response.body()
-                }
-            })
+                _listOfAsteroidFiltered.value = allAsteroids
+                Log.d("dataAsteroid", asteroids.data[getActualDate()].toString())
+            } catch (ex: Exception) {
+                _listOfAsteroids.value = null
+                _listOfAsteroidFiltered.value = null
+                Log.d("listError", ex.message ?: "undefined")
+            }
+
         }
 
 
     }
 
+    // This function uses Api service to get the today asteroids
+    fun getTodayAsteroids() {
 
-    // This function uses Api service to get the list of asteroids
-    private fun getAsteroids() {
 
         viewModelScope.launch {
-            AsteroidApi.retrofitService.getAsteroids().enqueue(object : Callback<AsteroidsData> {
-                override fun onFailure(call: Call<AsteroidsData>, t: Throwable) {
-                    _listOfAsteroids.value = null
 
-                    Log.d("listError", t.message ?: "undefined")
-                }
+            try {
+                val asteroids =
+                    AsteroidApi.retrofitService.getWeekAsteroids(getActualDate(), API_KEY)
+                _listOfAsteroids.value = asteroids
+                _listOfAsteroidFiltered.value = asteroids.data[getActualDate()]
+                Log.d("dataAsteroid", asteroids.data[getActualDate()].toString())
+            } catch (ex: Exception) {
+                _listOfAsteroids.value = null
+                _listOfAsteroidFiltered.value = null
+                Log.d("listError", ex.message ?: "undefined")
+            }
 
-                override fun onResponse(
-                    call: Call<AsteroidsData>,
-                    response: Response<AsteroidsData>
-                ) {
-                    _listOfAsteroids.value = response.body()
-
-                    response.body()?.data?.let { data ->
-                        _listOfAsteroidFiltered.value = data["2021-12-03"]
-
-                        Log.d("dataAsteroid", data["2021-12-03"].toString())
-                    }
-                }
-            })
         }
 
 
+    }
+
+    private fun getActualDate(): String {
+        val date = Calendar.getInstance().timeInMillis
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        Log.d("dateS", formatter.format(date))
+        return formatter.format(date)
     }
 
     init {

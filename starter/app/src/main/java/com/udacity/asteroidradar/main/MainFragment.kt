@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +41,21 @@ class MainFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.show_all_menu -> {
+                Log.d("MenuOption","Show week asteroids")
+                viewModel.getAsteroids()
+            }
+            R.id.show_rent_menu -> {
+                Log.d("MenuOption","Show today asteroids")
+                viewModel.getTodayAsteroids()
+            }
+            R.id.show_buy_menu -> {
+                Log.d("MenuOption","Show saved asteroids")
+            }
+        }
+
         return true
     }
 }

@@ -2,16 +2,14 @@ package com.udacity.asteroidradar.api
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.AsteroidsData
-import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.Constants.BASE_URL
 import com.udacity.asteroidradar.PictureOfDay
 import okhttp3.OkHttpClient
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
 // This variable enable to convert a Json object to Kotlin object
@@ -33,14 +31,26 @@ private val retrofit = Retrofit.Builder()
 interface AsteroidApiService {
 
 
-    @GET("planetary/apod?api_key=$API_KEY")
-    fun getPictureOfDay():
-            Call<PictureOfDay>
+    @GET("planetary/apod")
+   suspend  fun getPictureOfDay(
+        @Query("api_key") apiKey: String
+   ): PictureOfDay
 
 
-    @GET("neo/rest/v1/feed?start_date=2021-12-03&end_date=2021-12-10&api_key=$API_KEY")
-    fun getAsteroids():
-            Call<AsteroidsData>
+    @GET("neo/rest/v1/feed")
+    suspend fun getWeekAsteroids(
+        @Query("start_date") startDate: String,
+        @Query("api_key") apiKey: String
+    ): AsteroidsData
+
+
+    @GET("neo/rest/v1/feed")
+    fun getTodayAsteroids(
+        @Query("start_date") startDate: String,
+        @Query("end_date") endDate: String,
+        @Query("api_key") apiKey: String
+    ): AsteroidsData
+
 
 }
 
