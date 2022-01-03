@@ -1,17 +1,18 @@
 package com.udacity.asteroidradar
 
 import android.os.Parcelable
+import androidx.room.Embedded
 import com.squareup.moshi.Json
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CloseApproachData (
     @Json(name = "close_approach_date")
     val closeApproachDate: String,
     @Json(name = "relative_velocity")
-    val relativeVelocity: RelativeVelocity,
+    @Embedded val relativeVelocity: RelativeVelocity,
     @Json(name = "miss_distance")
-    val distanceFromEarth: MissDistance
+    @Embedded val distanceFromEarth: MissDistance
         ): Parcelable
 
 @Parcelize

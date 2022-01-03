@@ -7,3 +7,4 @@ Use the updated Gradle version in the `~/gradle/wrapper/gradle-wrapper.propertie
 ```
 distributionUrl = https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
 ```
+## Api key: The API KEY for the NASA's requests will be insert in the constants file.

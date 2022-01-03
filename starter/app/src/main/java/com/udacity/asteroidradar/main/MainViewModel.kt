@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.AsteroidsData
 import com.udacity.asteroidradar.Constants.API_KEY
+import com.udacity.asteroidradar.Constants.API_QUERY_DATE_FORMAT
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
 import kotlinx.coroutines.launch
@@ -107,7 +108,7 @@ class MainViewModel : ViewModel() {
 
     private fun getActualDate(): String {
         val date = Calendar.getInstance().timeInMillis
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formatter = SimpleDateFormat(API_QUERY_DATE_FORMAT, Locale.getDefault())
         Log.d("dateS", formatter.format(date))
         return formatter.format(date)
     }
