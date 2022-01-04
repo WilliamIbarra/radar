@@ -24,7 +24,7 @@ fun List<DatabaseAsteroids>.asDomainModel(): List<Asteroid> {
             id = it.id,
             codename = it.codename,
             closeApproachData =
-                CloseApproachData(
+               listOf( CloseApproachData(
                     closeApproachDate = it.closeApproachDate,
                     relativeVelocity = RelativeVelocity(
                         kilometersPerSecond = it.relativeVelocity
@@ -32,7 +32,7 @@ fun List<DatabaseAsteroids>.asDomainModel(): List<Asteroid> {
                     distanceFromEarth = MissDistance(
                         astronomical = it.missDistance
                     )
-                )
+                ))
             ,
             absoluteMagnitude = it.absoluteMagnitude,
             estimatedDiameter = Diameter(

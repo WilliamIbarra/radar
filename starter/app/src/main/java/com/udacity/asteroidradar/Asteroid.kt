@@ -24,7 +24,22 @@ data class Asteroid (
     @Embedded val estimatedDiameter: Diameter,
     @Json(name = "is_potentially_hazardous_asteroid")
     val isPotentiallyHazardous: Boolean
-) : Parcelable
+) : Parcelable {
+    constructor(
+        id: Long,
+        codename: String,
+        absoluteMagnitude: Double,
+        estimatedDiameter: Diameter,
+        isPotentiallyHazardous: Boolean
+    ) : this(
+        id,
+        codename,
+        emptyList(),
+        absoluteMagnitude,
+        estimatedDiameter,
+        isPotentiallyHazardous
+    )
+}
 
 @Parcelize
 data class Diameter(
