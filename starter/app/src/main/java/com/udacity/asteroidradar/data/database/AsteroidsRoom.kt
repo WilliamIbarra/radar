@@ -7,12 +7,12 @@ import com.udacity.asteroidradar.Asteroid
 
 @Dao
 interface AsteroidsDao {
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+
     @Query("SELECT * FROM Asteroid")
     fun getAsteroids(): LiveData<List<DatabaseAsteroids>>
 
 
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllAsteroids(asteroids: Array<DatabaseAsteroids>)
 

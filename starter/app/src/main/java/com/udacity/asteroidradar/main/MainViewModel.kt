@@ -73,7 +73,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
 
                 _listOfAsteroidFiltered.value = allAsteroids
-                Log.d("dataAsteroid", asteroids.toString())
+                Log.d("dataAsteroid", asteroids.value.toString())
             } catch (ex: Exception) {
                 _listOfAsteroids.value = null
                 _listOfAsteroidFiltered.value = null
