@@ -7,17 +7,16 @@ import com.udacity.asteroidradar.Asteroid
 
 @Dao
 interface AsteroidsDao {
-
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT * FROM Asteroid")
-    fun getAsteroids(): LiveData<List<Asteroid>>
+    fun getAsteroids(): LiveData<List<DatabaseAsteroids>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAllAsteroids(vararg asteroids: Asteroid)
+    suspend fun insertAllAsteroids(asteroids: Array<DatabaseAsteroids>)
 
 }
 
 @Database(entities = [Asteroid::class], version = 1, exportSchema = false)
-@TypeConverters(Converters::class)
 abstract class AsteroidsDB: RoomDatabase() {
 
     abstract val asteroidsDBDao: AsteroidsDao

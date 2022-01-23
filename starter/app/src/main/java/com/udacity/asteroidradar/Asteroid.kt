@@ -15,22 +15,22 @@ data class Asteroid (
     @PrimaryKey
     val id: Long,
     @Json(name = "name")
-    val codename: String,
+    val codename: String?,
     @Json(name = "close_approach_data")
     @Ignore val closeApproachData: List<CloseApproachData>?,
     @Json(name = "absolute_magnitude_h")
-    val absoluteMagnitude: Double,
+    val absoluteMagnitude: Double?,
     @Json(name = "estimated_diameter")
-    @Embedded val estimatedDiameter: Diameter,
+    @Embedded val estimatedDiameter: Diameter?,
     @Json(name = "is_potentially_hazardous_asteroid")
-    val isPotentiallyHazardous: Boolean
+    val isPotentiallyHazardous: Boolean?
 ) : Parcelable {
     constructor(
         id: Long,
-        codename: String,
-        absoluteMagnitude: Double,
-        estimatedDiameter: Diameter,
-        isPotentiallyHazardous: Boolean
+        codename: String?,
+        absoluteMagnitude: Double?,
+        estimatedDiameter: Diameter?,
+        isPotentiallyHazardous: Boolean?
     ) : this(
         id,
         codename,
@@ -40,7 +40,7 @@ data class Asteroid (
         isPotentiallyHazardous
     )
 }
-
+@Entity
 @Parcelize
 data class Diameter(
     @Json(name = "kilometers")
@@ -50,13 +50,13 @@ data class Diameter(
 @Parcelize
 data class Kilometers(
     @Json(name = "estimated_diameter_min")
-    val minDiameter: Float,
+    val minDiameter: Float?,
     @Json(name = "estimated_diameter_max")
-    val maxDiameter: Float
+    val maxDiameter: Float?
 ) : Parcelable
 
-fun Asteroid.asDatabaseModel(asteroids: List<Asteroid>): Array<DatabaseAsteroids> {
-    return asteroids.map{
+fun ArrayList<Asteroid>.asDatabaseModel(): Array<DatabaseAsteroids> {
+    return this.map{
         DatabaseAsteroids(
             id = it.id,
             codename = it.codename,
@@ -64,8 +64,8 @@ fun Asteroid.asDatabaseModel(asteroids: List<Asteroid>): Array<DatabaseAsteroids
             relativeVelocity = it.closeApproachData?.get(0)?.relativeVelocity?.kilometersPerSecond ?: 0.0F,
             missDistance = it.closeApproachData?.get(0)?.distanceFromEarth?.astronomical ?: 0.0F,
             absoluteMagnitude = it.absoluteMagnitude,
-            minDiameter = it.estimatedDiameter.kilometers.minDiameter,
-            maxDiameter = it.estimatedDiameter.kilometers.maxDiameter,
+            minDiameter = it.estimatedDiameter?.kilometers?.minDiameter,
+            maxDiameter = it.estimatedDiameter?.kilometers?.maxDiameter,
             isPotentiallyHazardous = it.isPotentiallyHazardous
         )
     }.toTypedArray()

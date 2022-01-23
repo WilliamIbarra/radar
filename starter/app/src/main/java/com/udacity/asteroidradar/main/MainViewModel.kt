@@ -1,23 +1,27 @@
 package com.udacity.asteroidradar.main
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.AsteroidsData
 import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.Constants.API_QUERY_DATE_FORMAT
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
+import com.udacity.asteroidradar.data.database.AsteroidsDB
+import com.udacity.asteroidradar.repository.AsteroidsRepository
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MainViewModel : ViewModel() {
+
+class MainViewModel(application: Application) : ViewModel() {
+
+    private val asteroidsRepository = AsteroidsRepository(AsteroidsDB.getInstance(application))
 
     // Variable for the image of the day
 
@@ -57,21 +61,19 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
 
             try {
-                val asteroids =
-                    AsteroidApi.retrofitService.getWeekAsteroids(getActualDate(), API_KEY)
-                _listOfAsteroids.value = asteroids
+
+                asteroidsRepository.refreshAsteroids()
+                val asteroids = asteroidsRepository.asteroids
 
                 val allAsteroids: ArrayList<Asteroid> = ArrayList()
-                asteroids.data.values.forEach { asteroidsList ->
+                asteroids.value?.forEach { asteroid ->
 
-                    asteroidsList.forEach { asteroid ->
-                        allAsteroids.add(asteroid)
-                    }
+                   allAsteroids.add(asteroid)
 
                 }
 
                 _listOfAsteroidFiltered.value = allAsteroids
-                Log.d("dataAsteroid", asteroids.data[getActualDate()].toString())
+                Log.d("dataAsteroid", asteroids.toString())
             } catch (ex: Exception) {
                 _listOfAsteroids.value = null
                 _listOfAsteroidFiltered.value = null
@@ -90,11 +92,13 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
 
             try {
-                val asteroids =
-                    AsteroidApi.retrofitService.getWeekAsteroids(getActualDate(), API_KEY)
-                _listOfAsteroids.value = asteroids
-                _listOfAsteroidFiltered.value = asteroids.data[getActualDate()]
-                Log.d("dataAsteroid", asteroids.data[getActualDate()].toString())
+
+
+                asteroidsRepository.refreshAsteroids()
+                val asteroids = asteroidsRepository.asteroids
+
+                _listOfAsteroidFiltered.value = asteroids.value
+                Log.d("dataAsteroid", asteroids.toString())
             } catch (ex: Exception) {
                 _listOfAsteroids.value = null
                 _listOfAsteroidFiltered.value = null
@@ -104,13 +108,6 @@ class MainViewModel : ViewModel() {
         }
 
 
-    }
-
-    private fun getActualDate(): String {
-        val date = Calendar.getInstance().timeInMillis
-        val formatter = SimpleDateFormat(API_QUERY_DATE_FORMAT, Locale.getDefault())
-        Log.d("dateS", formatter.format(date))
-        return formatter.format(date)
     }
 
     init {

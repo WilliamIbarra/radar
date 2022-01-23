@@ -2,20 +2,21 @@ package com.udacity.asteroidradar.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.RoomWarnings
 import com.udacity.asteroidradar.*
 
 @Entity
 data class DatabaseAsteroids constructor(
     @PrimaryKey
     val id: Long,
-    val codename: String,
-    val closeApproachDate: String,
-    val relativeVelocity: Float,
-    val missDistance: Float,
-    val absoluteMagnitude: Double,
-    val minDiameter: Float,
-    val maxDiameter: Float,
-    val isPotentiallyHazardous: Boolean
+    val codename: String?,
+    val closeApproachDate: String?,
+    val relativeVelocity: Float?,
+    val missDistance: Float?,
+    val absoluteMagnitude: Double?,
+    val minDiameter: Float?,
+    val maxDiameter: Float?,
+    val isPotentiallyHazardous: Boolean?
 )
 
 fun List<DatabaseAsteroids>.asDomainModel(): List<Asteroid> {
