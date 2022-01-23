@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
-import com.udacity.asteroidradar.MainActivity.Companion.WORK_NAME
 import com.udacity.asteroidradar.workmanager.RefreshDataWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
