@@ -19,7 +19,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class MainViewModel(application: Application) : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val asteroidsRepository = AsteroidsRepository(AsteroidsDB.getInstance(application))
 
@@ -114,4 +114,20 @@ class MainViewModel(application: Application) : ViewModel() {
         getPictureOfDay()
         getAsteroids()
     }
+
+    class Factory(val app: Application) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
+        }
+
+
+    }
 }
+
+
+
+

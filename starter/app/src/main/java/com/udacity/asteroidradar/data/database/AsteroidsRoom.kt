@@ -11,12 +11,14 @@ interface AsteroidsDao {
     @Query("SELECT * FROM Asteroid")
     fun getAsteroids(): LiveData<List<DatabaseAsteroids>>
 
+
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllAsteroids(asteroids: Array<DatabaseAsteroids>)
 
 }
 
-@Database(entities = [Asteroid::class], version = 1, exportSchema = false)
+@Database(entities = [Asteroid::class, DatabaseAsteroids::class], version = 1, exportSchema = false)
 abstract class AsteroidsDB: RoomDatabase() {
 
     abstract val asteroidsDBDao: AsteroidsDao
