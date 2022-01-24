@@ -3,6 +3,7 @@ package com.udacity.asteroidradar.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import androidx.room.Database
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.Constants.API_KEY
@@ -16,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class AsteroidsRepository(private val database: AsteroidsDB) {
 
@@ -23,6 +25,13 @@ class AsteroidsRepository(private val database: AsteroidsDB) {
         it.asDomainModel()
     }
 
+    val todayAsteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidsDBDao.getTodayAsteroids(getActualDate())) {
+        it.asDomainModel()
+    }
+
+    val savedAsteroids: LiveData<List<Asteroid>> = Transformations.map(database.asteroidsDBDao.getAsteroids()) {
+        it.asDomainModel()
+    }
 
     suspend fun refreshAsteroids() {
         withContext(Dispatchers.IO){
@@ -40,6 +49,24 @@ class AsteroidsRepository(private val database: AsteroidsDB) {
             database.asteroidsDBDao.insertAllAsteroids(allAsteroids.asDatabaseModel())
         }
     }
+
+    suspend fun getTodayAsteroids(){
+        withContext(Dispatchers.IO){
+            val asteroids = AsteroidApi.retrofitService.getTodayAsteroids(getActualDate(), getActualDate(), API_KEY)
+
+            val allAsteroids: ArrayList<Asteroid> = ArrayList()
+            asteroids.data.values.forEach { asteroidsList ->
+
+                asteroidsList.forEach { asteroid ->
+                    allAsteroids.add(asteroid)
+                }
+
+            }
+
+            database.asteroidsDBDao.insertAllAsteroids(allAsteroids.asDatabaseModel())
+        }
+    }
+
 
     private fun getActualDate(): String {
         val date = Calendar.getInstance().timeInMillis

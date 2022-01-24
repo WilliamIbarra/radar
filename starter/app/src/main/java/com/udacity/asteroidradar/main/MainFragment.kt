@@ -7,6 +7,9 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.udacity.asteroidradar.Constants.SAVED_ASTEROIDS
+import com.udacity.asteroidradar.Constants.TODAY_ASTEROIDS
+import com.udacity.asteroidradar.Constants.WEEK_ASTEROIDS
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.adapter.AsteroidAdapter
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
@@ -51,14 +54,15 @@ class MainFragment : Fragment() {
         when (item.itemId) {
             R.id.show_all_menu -> {
                 Log.d("MenuOption","Show week asteroids")
-                viewModel.getAsteroids()
+                viewModel.filterAsteroids(WEEK_ASTEROIDS)
             }
             R.id.show_rent_menu -> {
                 Log.d("MenuOption","Show today asteroids")
-                viewModel.getTodayAsteroids()
+                viewModel.filterAsteroids(TODAY_ASTEROIDS)
             }
             R.id.show_buy_menu -> {
                 Log.d("MenuOption","Show saved asteroids")
+                viewModel.filterAsteroids(SAVED_ASTEROIDS)
             }
         }
 

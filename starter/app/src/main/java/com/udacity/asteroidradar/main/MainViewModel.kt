@@ -4,19 +4,17 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.AsteroidsData
 import com.udacity.asteroidradar.Constants.API_KEY
-import com.udacity.asteroidradar.Constants.API_QUERY_DATE_FORMAT
+import com.udacity.asteroidradar.Constants.ERROR
+import com.udacity.asteroidradar.Constants.LOADING
+import com.udacity.asteroidradar.Constants.SUCCESS
+import com.udacity.asteroidradar.Constants.WEEK_ASTEROIDS
 import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.data.database.AsteroidsDB
 import com.udacity.asteroidradar.repository.AsteroidsRepository
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -29,16 +27,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val pictureOfDay: LiveData<PictureOfDay>
         get() = _pictureOfDay
 
-    // List of asteroids
+    private val _asteroids = MutableLiveData<LiveData<List<Asteroid>>>()
+    val asteroids: MutableLiveData<LiveData<List<Asteroid>>>
+        get() = _asteroids
 
-    private val _listOfAsteroids = MutableLiveData<AsteroidsData>()
-    val listOfAsteroids: LiveData<AsteroidsData>
-        get() = _listOfAsteroids
 
-    // Asteroids filtered
-    private val _listOfAsteroidFiltered = MutableLiveData<List<Asteroid>>()
-    val listOfAsteroidFiltered: LiveData<List<Asteroid>>
-        get() = _listOfAsteroidFiltered
+    //Status of the request
+    private val _status = MutableLiveData<Int>()
+        val status: LiveData<Int>
+    get() = _status
+
+
 
 
     // This method uses Api service to get the image of the day
@@ -54,65 +53,75 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun filterAsteroids(filter: Int) {
+        when (filter) {
+            0 -> {
+               asteroids.postValue(getAsteroids())
+            }
+            1 -> {
+               asteroids.postValue(getTodayAsteroids())
+            }
+            else -> {
+               asteroids.postValue(asteroidsRepository.savedAsteroids)
+            }
+        }
+    }
+
 
     // This function uses Api service to get the list of week asteroids
-    fun getAsteroids() {
+    private fun getAsteroids(): LiveData<List<Asteroid>> {
 
-        viewModelScope.launch {
-
-            try {
-
-                asteroidsRepository.refreshAsteroids()
-                val asteroids = asteroidsRepository.asteroids
-
-                val allAsteroids: ArrayList<Asteroid> = ArrayList()
-                asteroids.value?.forEach { asteroid ->
-
-                   allAsteroids.add(asteroid)
-
-                }
-
-                _listOfAsteroidFiltered.value = allAsteroids
-                Log.d("dataAsteroid", asteroids.value.toString())
-            } catch (ex: Exception) {
-                _listOfAsteroids.value = null
-                _listOfAsteroidFiltered.value = null
-                Log.d("listError", ex.message ?: "undefined")
-            }
-
-        }
-
-
-    }
-
-    // This function uses Api service to get the today asteroids
-    fun getTodayAsteroids() {
+        _status.value = LOADING
 
 
         viewModelScope.launch {
 
             try {
 
-
                 asteroidsRepository.refreshAsteroids()
-                val asteroids = asteroidsRepository.asteroids
 
-                _listOfAsteroidFiltered.value = asteroids.value
-                Log.d("dataAsteroid", asteroids.toString())
+                _status.value = SUCCESS
             } catch (ex: Exception) {
-                _listOfAsteroids.value = null
-                _listOfAsteroidFiltered.value = null
+
                 Log.d("listError", ex.message ?: "undefined")
+                _status.value = ERROR
             }
 
         }
 
+        return asteroidsRepository.asteroids
 
     }
+
+
+    // This function uses Api service to get today asteroids
+    private fun getTodayAsteroids(): LiveData<List<Asteroid>> {
+        _status.value = LOADING
+
+
+        viewModelScope.launch {
+
+            try {
+
+                asteroidsRepository.getTodayAsteroids()
+                _status.value = SUCCESS
+            } catch (ex: Exception) {
+
+                Log.d("listError", ex.message ?: "undefined")
+                _status.value = ERROR
+            }
+
+        }
+
+        return asteroidsRepository.todayAsteroids
+    }
+
+
+
 
     init {
         getPictureOfDay()
-        getAsteroids()
+        filterAsteroids(WEEK_ASTEROIDS)
     }
 
     class Factory(val app: Application) : ViewModelProvider.Factory {
@@ -121,7 +130,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(app) as T
             }
-            throw IllegalArgumentException("Unable to construct viewmodel")
+            throw IllegalArgumentException("Unable to construct viewModel")
         }
 
 
