@@ -2,7 +2,6 @@ package com.udacity.asteroidradar.data.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.RoomWarnings
 import com.udacity.asteroidradar.*
 
 @Entity

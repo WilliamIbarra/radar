@@ -1,6 +1,5 @@
 package com.udacity.asteroidradar.main
 
-import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -21,19 +20,20 @@ class MainFragment : Fragment() {
         val activity = requireNotNull(this.activity) {
             "You can only access the viewModel after onActivityCreated()"
         }
-        ViewModelProvider(this, MainViewModel.Factory(activity.application))
-            .get(MainViewModel::class.java)
+        ViewModelProvider(this, MainViewModel.Factory(activity.application))[MainViewModel::class.java]
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
         binding.viewModel = viewModel
 
         binding.asteroidRecycler.adapter = AsteroidAdapter(
-            AsteroidAdapter.AsteroidListener { asteroid ->  
+            AsteroidAdapter.AsteroidListener { asteroid ->
 //                TODO("make a section to call a detail of an asteroid")
                 findNavController().navigate(MainFragmentDirections.actionShowDetail(asteroid))
             }
@@ -53,15 +53,15 @@ class MainFragment : Fragment() {
 
         when (item.itemId) {
             R.id.show_all_menu -> {
-                Log.d("MenuOption","Show week asteroids")
+                Log.d("MenuOption", "Show week asteroids")
                 viewModel.filterAsteroids(WEEK_ASTEROIDS)
             }
             R.id.show_rent_menu -> {
-                Log.d("MenuOption","Show today asteroids")
+                Log.d("MenuOption", "Show today asteroids")
                 viewModel.filterAsteroids(TODAY_ASTEROIDS)
             }
             R.id.show_buy_menu -> {
-                Log.d("MenuOption","Show saved asteroids")
+                Log.d("MenuOption", "Show saved asteroids")
                 viewModel.filterAsteroids(SAVED_ASTEROIDS)
             }
         }

@@ -18,5 +18,5 @@ object Constants {
     const val SAVED_ASTEROIDS = 2
 
     // Put your api key here
-    const val API_KEY = "DZgj60AkvB1LEzqlIBGxR1VPsXrnRc8aETPx5pEK"
+    const val API_KEY = ""
 }

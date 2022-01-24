@@ -3,15 +3,12 @@ package com.udacity.asteroidradar.repository
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import androidx.room.Database
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.Constants.API_KEY
 import com.udacity.asteroidradar.api.AsteroidApi
-import com.udacity.asteroidradar.api.AsteroidApiService
 import com.udacity.asteroidradar.asDatabaseModel
 import com.udacity.asteroidradar.data.database.AsteroidsDB
-import com.udacity.asteroidradar.data.database.DatabaseAsteroids
 import com.udacity.asteroidradar.data.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

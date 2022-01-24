@@ -48,7 +48,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val pictureOfDay = AsteroidApi.retrofitService.getPictureOfDay(API_KEY)
                 _pictureOfDay.value = pictureOfDay
             } catch (ex: Exception) {
-                _pictureOfDay.value = null
+//                _pictureOfDay.value = null
             }
         }
     }
